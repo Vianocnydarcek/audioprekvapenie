@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tvoj Vianočný Darček!</title>
+    <style>
+        /* Základný štýl stránky */
+        body {
+            font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Hlavná karta */
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        p.intro {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        /* Štýl pre tlačidlá výberu */
+        .choice-btn {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-align: left;
+        }
+
+        .choice-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .btn-magic { background: linear-gradient(45deg, #6a11cb, #2575fc); }
+        .btn-funny { background: linear-gradient(45deg, #ffb347, #ffcc33); }
+        .btn-mystery { background: linear-gradient(45deg, #11998e, #38ef7d); }
+
+        .icon { margin-right: 15px; }
+
+        /* Sekcia s odporúčaním (skrytá na začiatku) */
+        .recommendation {
+            display: none; /* Skryté */
+            background-color: #f0f4f8;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 3px dashed #a6c1ee;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .book-title {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+
+        .book-desc {
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        /* Tlačidlo na aktiváciu darčeka */
+        .redeem-section {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .redeem-btn {
+            display: inline-block;
+            background-color: #e84393;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(232, 67, 147, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        /* Animácie */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎄 Ahoj vianočný poslucháč! 🎁</h1>
+        <p class="intro">Tvoj tablet sa práve premenil na bránu do sveta príbehov. Na čo máš dnes najväčšiu chuť?</p>
+
+        <div id="choices">
+            <button class="choice-btn btn-magic" onclick="showRecommendation('magic')">
+                <span class="icon">🦄</span> Chcem čarovať a kúzliť!
+            </button>
+            <button class="choice-btn btn-funny" onclick="showRecommendation('funny')">
+                <span class="icon">😂</span> Chcem sa smiať, až ma brucho rozbolí!
+            </button>
+            <button class="choice-btn btn-mystery" onclick="showRecommendation('mystery')">
+                <span class="icon">🕵️‍♀️</span> Chcem vyriešiť záhadu!
+            </button>
+        </div>
+
+        <div id="rec-magic" class="recommendation">
+            <h2>✨ Tvoj tip: Harry Potter a Kameň mudrcov</h2>
+            <p class="book-desc">Naskoč na Rokfortský expres! Čaká ťa najslávnejší čarodejnícky príbeh všetkých čias. Dokonalý začiatok tvojho dobrodružstva.</p>
+        </div>
+
+        <div id="rec-funny" class="recommendation">
+            <h2>🤪 Tvoj tip: Denník mimoňky</h2>
+            <p class="book-desc">Škola, trapasy a kopa smiechu. Zisti, že aj keď si "mimoň", môžeš zažiť super veci. Vtipné a ľahké počúvanie.</p>
+        </div>
+
+        <div id="rec-mystery" class="recommendation">
+            <h2>🔍 Tvoj tip: Klub detektívov (séria)</h2>
+            <p class="book-desc">Staň sa súčasťou tímu! Napínavé pátranie, kde musíš zapojiť vlastnú hlavu, aby ste odhalili páchateľa.</p>
+        </div>
+
+
+        <div class="redeem-section">
+            <p style="font-size: 1.2em; margin-bottom: 15px;">Už vieš, čo si vyberieš? Super!</p>
+            <a href="https://www.audiolibrix.com/sk/Gift/Redeem" target="_blank" class="redeem-btn">
+                👉 AKTIVOVAŤ MÔJ DARČEK 👈
+            </a>
+            <p style="font-size: 0.9em; color: #777; margin-top: 10px;">(Klikni sem a zadaj kód zo svojho poukazu)</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Jednoduchá funkcia na prepínanie odporúčaní
+        function showRecommendation(type) {
+            // Najprv skryjeme všetky odporúčania
+            document.getElementById('rec-magic').style.display = 'none';
+            document.getElementById('rec-funny').style.display = 'none';
+            document.getElementById('rec-mystery').style.display = 'none';
+
+            // Potom zobrazíme to, na ktoré klikla
+            document.getElementById('rec-' + type).style.display = 'block';
+
+            // Posunieme stránku trochu dole, aby videla výsledok
+            document.getElementById('rec-' + type).scrollIntoView({behavior: "smooth"});
+        }
+    </script>
+
+</body>
+</html>
