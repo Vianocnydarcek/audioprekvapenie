@@ -16,7 +16,7 @@
             color: #333; box-shadow: 0 0 40px rgba(255,255,255,0.2); text-align: center; margin-top: 10px; z-index: 10;
         }
 
-        /* --- GRAFIKA PSA (OPRAVENÉ NOHY) --- */
+        /* --- GRAFIKA PSA (HLAVA V STREDE) --- */
         .game-area { height: 260px; position: relative; width: 100%; overflow: hidden; touch-action: none; }
         .dog-wrapper { height: 200px; position: absolute; width: 160px; left: 50%; top: 40%; transform: translate(-50%, -40%); transition: 0.2s; }
         
@@ -26,40 +26,38 @@
             animation: breathe 3s infinite; z-index: 3; 
         }
 
+        /* HLAVA - VYCENTROVANÁ NA STRED */
         .dog-head { 
             width: 85px; height: 75px; background: var(--dog); border-radius: 25px; 
-            position: absolute; top: 10px; right: 5px; border: 3px solid var(--dog-d); z-index: 5; 
+            position: absolute; 
+            top: -10px; /* Posunutá vyššie na telo */
+            left: 50%; transform: translateX(-50%); /* Horizontálne vycentrovanie */
+            border: 3px solid var(--dog-d); z-index: 5; 
         }
 
+        /* UŠI - SYMETRICKÉ */
         .ear { width: 22px; height: 40px; background: var(--dog-d); position: absolute; border-radius: 8px; top: -5px; z-index: -1; }
-        .ear.l { left: -10px; transform: rotate(-20deg); } 
-        .ear.r { right: -10px; transform: rotate(20deg); }
+        .ear.l { left: -5px; transform: rotate(-20deg); } 
+        .ear.r { right: -5px; transform: rotate(20deg); }
 
-        .eye { width: 14px; height: 14px; background: #222; border-radius: 50%; position: absolute; top: 20px; border: 2px solid var(--acc); box-shadow: 0 0 8px var(--acc); }
-        .eye.l { left: 18px; } .eye.r { right: 18px; }
+        /* OČI - SYMETRICKÉ */
+        .eye { width: 14px; height: 14px; background: #222; border-radius: 50%; position: absolute; top: 25px; border: 2px solid var(--acc); box-shadow: 0 0 8px var(--acc); }
+        .eye.l { left: 20px; } .eye.r { right: 20px; }
 
+        /* ŇUFÁK A ÚSTA (Už boli vycentrované, len sa posunú s hlavou) */
         .snout { width: 34px; height: 22px; background: #eef2f3; border-radius: 12px; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); border: 1px solid #ccc; }
         .nose-tip { width: 12px; height: 8px; background: #333; border-radius: 4px; position: absolute; top: 3px; left: 50%; transform: translateX(-50%); }
         .mouth { width: 18px; height: 8px; border-bottom: 2px solid #555; border-radius: 50%; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); }
 
-        /* NOHY - NOVÝ DIZAJN */
-        /* Predné nohy (súčasť tela) */
-        .leg { 
-            width: 20px; height: 35px; background: var(--dog); border: 3px solid var(--dog-d); 
-            border-radius: 8px; position: absolute; bottom: -20px; z-index: 4;
-        }
-        .leg::after { content: ''; width: 24px; height: 10px; background: var(--dog-d); position: absolute; bottom: -3px; left: -2px; border-radius: 5px; } /* Labka */
+        /* NOHY */
+        .leg { width: 20px; height: 35px; background: var(--dog); border: 3px solid var(--dog-d); border-radius: 8px; position: absolute; bottom: -20px; z-index: 4; }
+        .leg::after { content: ''; width: 24px; height: 10px; background: var(--dog-d); position: absolute; bottom: -3px; left: -2px; border-radius: 5px; }
         .leg.l { left: 15px; } .leg.r { right: 15px; }
 
-        /* Zadné nohy (tmavšie, vzadu) */
-        .back-leg { 
-            width: 20px; height: 40px; background: var(--dog-shadow); border: 3px solid var(--dog-d); 
-            border-radius: 8px; position: absolute; bottom: 30px; z-index: 1; 
-        }
-        .back-leg::after { content: ''; width: 24px; height: 10px; background: var(--dog-d); position: absolute; bottom: -3px; left: -2px; border-radius: 5px; } /* Labka */
+        .back-leg { width: 20px; height: 40px; background: var(--dog-shadow); border: 3px solid var(--dog-d); border-radius: 8px; position: absolute; bottom: 30px; z-index: 1; }
+        .back-leg::after { content: ''; width: 24px; height: 10px; background: var(--dog-d); position: absolute; bottom: -3px; left: -2px; border-radius: 5px; }
         .back-leg.l { left: 25px; transform: rotate(-5deg); } 
         .back-leg.r { right: 25px; transform: rotate(5deg); }
-
 
         .tail { width: 40px; height: 10px; background: var(--dog-d); position: absolute; left: 5px; bottom: 95px; border-radius: 10px; transform-origin: right; animation: wag 0.8s infinite alternate; z-index: 1; }
         .tail.fast { animation: wag 0.2s infinite alternate !important; }
@@ -89,12 +87,9 @@
             <div class="dog-wrapper">
                 <div class="tail" id="tail"></div>
                 
-                <div class="back-leg l"></div>
-                <div class="back-leg r"></div>
-
+                <div class="back-leg l"></div><div class="back-leg r"></div>
                 <div class="dog-body" id="dog-body">
-                    <div class="leg l"></div>
-                    <div class="leg r"></div>
+                    <div class="leg l"></div><div class="leg r"></div>
                 </div>
                 
                 <div class="dog-head">
@@ -162,8 +157,8 @@
         function pet(x, y) {
             if(stage !== 1) return;
             const r = document.getElementById('dog-body').getBoundingClientRect();
-            // Rozšírená oblasť pre dotyk vrátane nôh
-            if(x > r.left - 10 && x < r.right + 10 && y > r.top && y < r.bottom + 40) { 
+            // Oblasť dotyku
+            if(x > r.left - 10 && x < r.right + 10 && y > r.top - 20 && y < r.bottom + 40) { 
                 happy += 0.5; updateBar();
                 heart(x, y);
                 document.getElementById('tail').classList.add('fast');
