@@ -6,7 +6,7 @@
     <title>Ježiškov Robo-posol pre Zoe</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --dog: #d1d8e0; --dog-d: #a5b1c2; --dog-shadow: #8e9da5; --acc: #45aaf2; --gold: #f1c40f; }
+        :root { --dog: #d1d8e0; --dog-d: #a5b1c2; --dog-shadow: #8e9da5; --acc: #45aaf2; --gold: #f7b731; }
         body {
             font-family: 'Segoe UI', sans-serif; background: #1e272e; color: white; margin: 0; padding: 10px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; touch-action: none; overflow: hidden;
@@ -26,30 +26,23 @@
             animation: breathe 3s infinite; z-index: 3; 
         }
 
-        /* HLAVA - VYCENTROVANÁ NA STRED */
         .dog-head { 
             width: 85px; height: 75px; background: var(--dog); border-radius: 25px; 
-            position: absolute; 
-            top: -10px; /* Posunutá vyššie na telo */
-            left: 50%; transform: translateX(-50%); /* Horizontálne vycentrovanie */
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
             border: 3px solid var(--dog-d); z-index: 5; 
         }
 
-        /* UŠI - SYMETRICKÉ */
         .ear { width: 22px; height: 40px; background: var(--dog-d); position: absolute; border-radius: 8px; top: -5px; z-index: -1; }
         .ear.l { left: -5px; transform: rotate(-20deg); } 
         .ear.r { right: -5px; transform: rotate(20deg); }
 
-        /* OČI - SYMETRICKÉ */
         .eye { width: 14px; height: 14px; background: #222; border-radius: 50%; position: absolute; top: 25px; border: 2px solid var(--acc); box-shadow: 0 0 8px var(--acc); }
         .eye.l { left: 20px; } .eye.r { right: 20px; }
 
-        /* ŇUFÁK A ÚSTA (Už boli vycentrované, len sa posunú s hlavou) */
         .snout { width: 34px; height: 22px; background: #eef2f3; border-radius: 12px; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); border: 1px solid #ccc; }
         .nose-tip { width: 12px; height: 8px; background: #333; border-radius: 4px; position: absolute; top: 3px; left: 50%; transform: translateX(-50%); }
         .mouth { width: 18px; height: 8px; border-bottom: 2px solid #555; border-radius: 50%; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); }
 
-        /* NOHY */
         .leg { width: 20px; height: 35px; background: var(--dog); border: 3px solid var(--dog-d); border-radius: 8px; position: absolute; bottom: -20px; z-index: 4; }
         .leg::after { content: ''; width: 24px; height: 10px; background: var(--dog-d); position: absolute; bottom: -3px; left: -2px; border-radius: 5px; }
         .leg.l { left: 15px; } .leg.r { right: 15px; }
@@ -69,7 +62,6 @@
         .heart { position: absolute; font-size: 25px; pointer-events: none; animation: floatUp 1s forwards; z-index: 99; }
         @keyframes floatUp { 0% { transform: translateY(0) opacity(1); } 100% { transform: translateY(-100px) opacity(0); } }
 
-        /* --- UI --- */
         .speech { background: #f1f2f6; border-radius: 20px; padding: 15px; margin: 10px 0; font-weight: bold; border: 2px solid #ddd; font-size: 15px; min-height: 40px; }
         .progress-bg { background: #eee; height: 18px; border-radius: 10px; overflow: hidden; margin: 10px 0; display: none; }
         .progress-fill { background: linear-gradient(90deg, #2ecc71, #27ae60); width: 0%; height: 100%; transition: width 0.3s; }
@@ -86,12 +78,10 @@
             <div id="bone" style="display:none;">🦴</div>
             <div class="dog-wrapper">
                 <div class="tail" id="tail"></div>
-                
                 <div class="back-leg l"></div><div class="back-leg r"></div>
                 <div class="dog-body" id="dog-body">
                     <div class="leg l"></div><div class="leg r"></div>
                 </div>
-                
                 <div class="dog-head">
                     <div class="ear l"></div><div class="ear r"></div>
                     <div class="eye l"></div><div class="eye r"></div>
@@ -130,13 +120,18 @@
 
     <script>
         let happy = 0; let dName = ""; let stage = 0;
-        const speech = document.getElementById('dialogue');
+        const speechDisplay = document.getElementById('dialogue');
 
-        function talk(t) {
+        function talk(t, callback) {
             window.speechSynthesis.cancel();
             const m = new SpeechSynthesisUtterance(t);
             m.lang = 'sk-SK'; m.pitch = 1.4;
-            speech.innerText = t;
+            speechDisplay.innerText = t;
+            
+            if (callback) {
+                m.onend = callback;
+            }
+            
             window.speechSynthesis.speak(m);
         }
 
@@ -157,12 +152,10 @@
         function pet(x, y) {
             if(stage !== 1) return;
             const r = document.getElementById('dog-body').getBoundingClientRect();
-            // Oblasť dotyku
             if(x > r.left - 10 && x < r.right + 10 && y > r.top - 20 && y < r.bottom + 40) { 
                 happy += 0.5; updateBar();
                 heart(x, y);
                 document.getElementById('tail').classList.add('fast');
-                if(Math.random() > 0.98) talk("Tooo je ono! Ešte!");
             } else { document.getElementById('tail').classList.remove('fast'); }
         }
 
@@ -185,7 +178,7 @@
                 happy += 30; updateBar();
                 talk("Mňam! Táto je priamo z nebeskej kuchyne!");
                 confetti({particleCount: 30, origin:{x:0.5, y:0.5}});
-                setTimeout(() => { b.style.display="block"; b.style.bottom="10px"; b.style.right="10px"; b.style.left="auto"; b.style.top="auto";}, 2000);
+                setTimeout(() => { if(stage === 1) { b.style.display="block"; b.style.bottom="10px"; b.style.right="10px"; b.style.left="auto"; b.style.top="auto";} }, 2000);
             }
         };
         b.onpointerup = () => drag = false;
@@ -197,11 +190,13 @@
                 stage = 2;
                 document.getElementById('p2').style.display = 'none';
                 document.getElementById('bone').style.display = 'none';
-                talk("Juchúúú! Cítim sa úžasne, Zoe! Teraz ti môžem prezradiť, čo mi Ježiško povedal. Nechal tu pre teba darček v podobe audiokníh! Chceš ich vidieť?");
-                setTimeout(() => {
+                
+                // TU JE ZMENA: Celý text je v jednom bloku a karty sa zobrazia až PO dohovorení
+                const finalIntro = "Juchúúú! Cítim sa úžasne, Zoe! Teraz ti môžem prezradiť, čo mi Ježiško povedal. Nechal tu pre teba darček v podobe audiokníh! Chceš ich vidieť? Pozri na tieto rozprávky. Klikni na nejakú a ja ti o nej niečo poviem.";
+                
+                talk(finalIntro, function() {
                     document.querySelectorAll('.book-card').forEach(c => c.style.display = 'block');
-                    talk("Pozri na tieto rozprávky. Klikni na nejakú a ja ti o nej niečo poviem.");
-                }, 3000);
+                });
             }
         }
 
