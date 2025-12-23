@@ -120,19 +120,37 @@
 
     <script>
         let happy = 0; let dName = ""; let stage = 0;
+        let currentUtterance = null;
         const speechDisplay = document.getElementById('dialogue');
 
-        function talk(t, callback) {
+        function talk(text, callback) {
             window.speechSynthesis.cancel();
-            const m = new SpeechSynthesisUtterance(t);
-            m.lang = 'sk-SK'; m.pitch = 1.4;
-            speechDisplay.innerText = t;
+            
+            // Premennú si držíme v globálnom scope, aby ju garbage collector nezmazal pred koncom reči
+            currentUtterance = new SpeechSynthesisUtterance(text);
+            currentUtterance.lang = 'sk-SK';
+            currentUtterance.pitch = 1.4;
+            speechDisplay.innerText = text;
             
             if (callback) {
-                m.onend = callback;
+                let callbackExecuted = false;
+                
+                // Definujeme funkciu, ktorá sa spustí len raz
+                const safeCallback = () => {
+                    if (!callbackExecuted) {
+                        callbackExecuted = true;
+                        callback();
+                    }
+                };
+
+                currentUtterance.onend = safeCallback;
+                currentUtterance.onerror = safeCallback;
+
+                // POISTKA: Ak sa nič nestane do 11 sekúnd (veta trvá cca 8-9s), pustíme to ručne
+                setTimeout(safeCallback, 11000);
             }
             
-            window.speechSynthesis.speak(m);
+            window.speechSynthesis.speak(currentUtterance);
         }
 
         function initDog() {
@@ -191,7 +209,6 @@
                 document.getElementById('p2').style.display = 'none';
                 document.getElementById('bone').style.display = 'none';
                 
-                // TU JE ZMENA: Celý text je v jednom bloku a karty sa zobrazia až PO dohovorení
                 const finalIntro = "Juchúúú! Cítim sa úžasne, Zoe! Teraz ti môžem prezradiť, čo mi Ježiško povedal. Nechal tu pre teba darček v podobe audiokníh! Chceš ich vidieť? Pozri na tieto rozprávky. Klikni na nejakú a ja ti o nej niečo poviem.";
                 
                 talk(finalIntro, function() {
