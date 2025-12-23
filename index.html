@@ -6,233 +6,240 @@
     <title>Ježiškov Robo-posol pre Zoe</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --gold: #f1c40f; }
+        :root { --accent: #00bcd4; --gold: #f1c40f; }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
             font-family: 'Segoe UI', sans-serif;
-            /* Pozadie inšpirované obrázkom */
-            background: radial-gradient(circle at center, #e0f7fa, #80deea, #00bcd4);
-            color: #333; margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center; 
-            min-height: 100vh; touch-action: none; overflow: hidden;
+            background: radial-gradient(circle, #e0f7fa, #80deea, #00acc1);
+            margin: 0; padding: 10px;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; width: 100vw; overflow: hidden;
+            touch-action: none;
         }
-        .container {
-            background: rgba(255, 255, 255, 0.95); border-radius: 30px; max-width: 450px; width: 95%; 
-            padding: 20px; box-shadow: 0 10px 30px rgba(0, 188, 212, 0.3); text-align: center; margin-top: 10px;
-            border: 3px solid #b2ebf2;
-        }
-        
-        /* --- GRAFIKA PSA (OBRÁZOK) --- */
-        #dog-container {
-            width: 100%;
-            max-width: 350px; /* Aby nebol príliš veľký na mobile */
-            height: auto;
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.95);
+            width: 100%; max-width: 400px; max-height: 95vh;
+            border-radius: 30px; padding: 15px;
+            display: flex; flex-direction: column;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 2px solid white;
             position: relative;
-            margin: 0 auto; /* Centrovanie */
-            cursor: pointer;
         }
 
-        /* Štýl pre vložený obrázok */
+        /* --- PES A HRA --- */
+        .dog-section {
+            flex: 1; position: relative; min-height: 180px;
+            display: flex; justify-content: center; align-items: center;
+        }
+        
         #dog-img {
-            width: 100%;
-            height: auto;
-            display: block;
-            pointer-events: none; /* Dôležité: aby dotyky prešli cez obrázok na kontajner */
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+            max-width: 100%; max-height: 100%; object-fit: contain;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1));
+            pointer-events: auto;
         }
 
-        /* Animácie */
-        .heart { position: absolute; font-size: 25px; pointer-events: none; animation: floatUp 1s forwards; z-index: 100; }
-        @keyframes floatUp { 0% { transform: translateY(0) opacity(1); } 100% { transform: translateY(-100px) opacity(0); } }
-        
-        #bone { font-size: 50px; position: absolute; bottom: 0px; right: 0px; cursor: grab; z-index: 110; touch-action: none; user-select: none; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2)); }
+        #bone {
+            position: absolute; bottom: 10px; right: 10px;
+            font-size: 45px; cursor: grab; z-index: 100;
+            user-select: none; touch-action: none;
+        }
 
-        /* --- UI --- */
-        .speech { background: #f8fdff; border-radius: 20px; padding: 15px; margin: 15px 0; font-weight: bold; border: 2px solid #b2ebf2; font-size: 15px; min-height: 50px; color: #006064; }
-        .progress-bg { background: #e0e0e0; height: 18px; border-radius: 10px; overflow: hidden; margin: 10px 0; display: none; border: 1px solid #ccc; }
-        .progress-fill { background: linear-gradient(90deg, #00bcd4, #00acc1); width: 0%; height: 100%; transition: width 0.3s; }
-        .btn { background: #00bcd4; color: white; border: none; padding: 15px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 16px; margin: 10px 0; box-shadow: 0 4px 10px rgba(0, 188, 212, 0.3); transition: 0.2s;}
-        .btn:hover { background: #00acc1; transform: scale(1.02); }
-        
-        /* KNIHY */
-        .book-card { background: white; border: 2px solid #e0f7fa; border-radius: 15px; padding: 12px; margin: 8px 0; display: none; cursor: pointer; text-align: left; transition: 0.2s; display: flex; align-items: center;}
-        .book-card:active { background: #e0f7fa; }
-        .book-card img { width: 50px; height: auto; border-radius: 5px; margin-right: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .book-info h4 { margin: 0 0 5px 0; color: #006064; }
-        .book-info p { margin: 0; font-size: 13px; color: #666; }
+        .heart {
+            position: absolute; font-size: 25px; pointer-events: none;
+            animation: floatUp 1s forwards; z-index: 99;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-120px) scale(1.5); opacity: 0; }
+        }
 
-        #voucher-section { display: none; background: #fffde7; border: 3px dashed var(--gold); padding: 20px; border-radius: 25px; }
+        /* --- UI PRVKY --- */
+        .speech-bubble {
+            background: #f1f9fb; border-radius: 15px; padding: 12px;
+            margin: 10px 0; border: 2px solid #b2ebf2;
+            font-size: 14px; font-weight: bold; color: #006064; text-align: center;
+        }
+
+        .progress-container { height: 14px; background: #eee; border-radius: 7px; overflow: hidden; margin-bottom: 10px; display: none; }
+        .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, #00bcd4, #00e5ff); transition: width 0.3s; }
+
+        .input-group { display: flex; gap: 8px; margin-bottom: 10px; }
+        input { flex: 1; padding: 12px; border-radius: 12px; border: 2px solid #ddd; outline: none; }
+        
+        .btn {
+            background: var(--accent); color: white; border: none; padding: 12px 20px;
+            border-radius: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        /* --- ZOZNAM KNÍH (PODĽA SCREENSHOTU) --- */
+        #book-list { overflow-y: auto; display: none; margin-bottom: 10px; }
+        .book-item {
+            display: flex; align-items: center; background: white;
+            border: 1px solid #e0e0e0; border-radius: 10px; padding: 8px;
+            margin-bottom: 8px; cursor: pointer; transition: 0.2s;
+        }
+        .book-item:active { transform: scale(0.97); background: #f5f5f5; }
+        .book-icon {
+            width: 45px; height: 45px; border-radius: 6px;
+            margin-right: 12px; object-fit: cover;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .book-text { flex: 1; }
+        .book-title { font-size: 14px; font-weight: bold; color: #00796b; margin: 0; }
+        .book-desc { font-size: 11px; color: #757575; margin: 0; }
+
+        #voucher-box {
+            display: none; background: #fffde7; border: 2px dashed var(--gold);
+            padding: 15px; border-radius: 15px; text-align: center;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div id="dog-container">
-        <img id="dog-img" src="robopes.jpg" alt="Robopes">
-        
+<div class="app-card">
+    <div class="dog-section" id="game-area">
+        <img id="dog-img" src="robopes.png" alt="Robo-pes">
         <div id="bone" style="display:none;">🦴</div>
     </div>
 
-    <div class="speech" id="dialogue">Pripájam sa na vianočnú sieť...</div>
+    <div class="speech-bubble" id="speech">Pripravujem Ježiškov odkaz...</div>
 
-    <div id="p1">
-        <input type="text" id="d-name" placeholder="Ako ma pomenuješ?" style="padding:12px; border-radius:15px; border:2px solid #b2ebf2; width:60%; font-size:16px; text-align: center;">
-        <br>
-        <button class="btn" onclick="init()">To je tvoje meno!</button>
+    <div id="f1" class="input-group">
+        <input type="text" id="dog-name" placeholder="Ako ma pomenuješ?">
+        <button class="btn" onclick="initDog()">OK</button>
     </div>
 
-    <div id="p2" class="progress-bg"><div id="bar" class="progress-fill"></div></div>
+    <div id="f2" class="progress-container"><div id="bar" class="progress-fill"></div></div>
 
-    <div id="p3" style="display: none;">
-        <div class="book-card" onclick="bt(1)">
-            <img src="https://www.audiolibrix.com/product/cz/2023/06/01/117163/cz-spravna-petka-na-ostrove-pokladu-enid-blyton-250.jpg" alt="Správna päťka">
-            <div class="book-info">
-                <h4>Správna pětka</h4>
-                <p>Dobrodružstvo na ostrove pokladov</p>
+    <div id="book-list">
+        <div class="book-item" onclick="bookTalk(1)">
+            <img class="book-icon" src="https://www.audiolibrix.com/product/cz/2023/06/01/117163/cz-spravna-petka-na-ostrove-pokladu-enid-blyton-250.jpg">
+            <div class="book-text">
+                <p class="book-title">Správna pětka</p>
+                <p class="book-desc">Dobrodružstvo na ostrove pokladov</p>
             </div>
         </div>
-        <div class="book-card" onclick="bt(2)">
-             <img src="https://www.audiolibrix.com/product/sk/2017/11/02/23586/sk-o-chlapcovi-ktory-rozumel-psom-gabriela-futova-250.jpg" alt="O chlapcovi...">
-            <div class="book-info">
-                <h4>O chlapcovi, ktorý rozumel psom</h4>
-                <p>Gabriela Futová, číta Ľuboš Kostelný</p>
+        <div class="book-item" onclick="bookTalk(2)">
+            <img class="book-icon" src="https://www.audiolibrix.com/product/sk/2017/11/02/23586/sk-o-chlapcovi-ktory-rozumel-psom-gabriela-futova-250.jpg">
+            <div class="book-text">
+                <p class="book-title">O chlapcovi, ktorý rozumel psom</p>
+                <p class="book-desc">Gabriela Futová, číta Ľuboš Kostelný</p>
             </div>
         </div>
-        <div class="book-card" onclick="bt(3)">
-             <img src="https://www.audiolibrix.com/product/sk/2022/05/05/97841/sk-robopes-david-walliams-250.jpg" alt="Robopes">
-            <div class="book-info">
-                <h4>Robopes</h4>
-                <p>David Walliams, číta Juraj Kemka</p>
+        <div class="book-item" onclick="bookTalk(3)">
+            <img class="book-icon" src="https://www.audiolibrix.com/product/sk/2022/05/05/97841/sk-robopes-david-walliams-250.jpg">
+            <div class="book-text">
+                <p class="book-title">Robopes</p>
+                <p class="book-desc">David Walliams, číta Juraj Kemka</p>
             </div>
         </div>
-        <button class="btn" id="gift-btn" style="display:none; background:var(--gold); color:black; width: 100%;" onclick="showF()">🎁 ODOMKNÚŤ DARČEK</button>
+        <button class="btn" id="gift-btn" style="width:100%; background:var(--gold); color:black; display:none;" onclick="showFinal()">🎁 ODOMKNÚŤ DARČEK</button>
     </div>
 
-    <div id="voucher-section">
-        <h3 style="margin:0; color: #f57f17;">🎄 Tajný kód od Ježiška 🎄</h3>
-        <p style="font-size: 26px; font-weight: bold; margin:15px 0; letter-spacing: 2px; color: #333;">EECHPLKMKBHH</p>
+    <div id="voucher-box">
+        <p style="margin:0; font-weight:bold; color:#f57f17;">TVOJ VIANOČNÝ KÓD:</p>
+        <p style="font-size: 22px; font-weight: bold; margin: 10px 0;">EECHPLKMKBHH</p>
         <a href="https://www.audiolibrix.com/sk/User/Register?returnUrl=%2Fsk" target="_blank" style="text-decoration:none;">
-            <button class="btn" style="width:100%; background:#e74c3c; font-size: 18px;">AKTIVOVAŤ V KNIŽNICI</button>
+            <button class="btn" style="width:100%; background:#e74c3c;">AKTIVOVAŤ</button>
         </a>
     </div>
 </div>
 
 <script>
     let happy = 0; let dName = ""; let stage = 0;
-    const speech = document.getElementById('dialogue');
-    const dogImgElem = document.getElementById('dog-img');
+    const speech = document.getElementById('speech');
 
     function talk(t) {
         window.speechSynthesis.cancel();
         const m = new SpeechSynthesisUtterance(t);
-        m.lang = 'sk-SK'; m.pitch = 1.1; m.rate = 1.1;
+        m.lang = 'sk-SK'; m.pitch = 1.2;
         speech.innerText = t;
         window.speechSynthesis.speak(m);
     }
 
-    function init() {
-        const val = document.getElementById('d-name').value;
+    function initDog() {
+        const val = document.getElementById('dog-name').value;
         if(!val) return;
         dName = val; stage = 1;
-        document.getElementById('p1').style.display = 'none';
-        document.getElementById('p2').style.display = 'block';
+        document.getElementById('f1').style.display = 'none';
+        document.getElementById('f2').style.display = 'block';
         document.getElementById('bone').style.display = 'block';
-        talk("Ahoj Zoe! Takže ja som " + dName + ". Ježiško mi o tebe hovoril. Poslal ma z budúcnosti, aby som ti odovzdal dôležitý odkaz. Ale cesta cez časopriestor ma vyčerpala... Potrebujem energiu. Skús ma pohladiť po hlave alebo mi daj túto digitálnu kostičku.");
+        talk("Ahoj Zoe! Ja som tvoj " + dName + ". Ježiško ma poslal, aby som ti pomohol. Ale som unavený... pohlaď ma prstom alebo mi daj kosť.");
     }
 
-    // --- HLADKANIE (Na obrázku) ---
-    const container = document.getElementById('dog-container');
-    container.addEventListener('mousemove', (e) => pet(e.clientX, e.clientY));
-    container.addEventListener('touchmove', (e) => pet(e.touches[0].clientX, e.touches[0].clientY));
+    // --- HERNÁ LOGIKA (Hladkanie a kosť) ---
+    const area = document.getElementById('game-area');
+    area.addEventListener('mousemove', (e) => handlePet(e.clientX, e.clientY));
+    area.addEventListener('touchmove', (e) => handlePet(e.touches[0].clientX, e.touches[0].clientY));
 
-    function pet(x, y) {
+    function handlePet(x, y) {
         if(stage !== 1) return;
-        // Zistíme polohu obrázka
-        const r = dogImgElem.getBoundingClientRect();
-        // Ak je dotyk vo vnútri obrázka
+        const r = document.getElementById('dog-img').getBoundingClientRect();
         if(x > r.left && x < r.right && y > r.top && y < r.bottom) {
-            happy += 0.8; updateBar();
-            if(Math.random() > 0.85) heart(x, y);
+            happy += 0.15; // POMALŠIE NAPĹŇANIE
+            updateBar();
+            if(Math.random() > 0.9) createHeart(x, y);
         }
     }
 
-    function heart(x, y) {
-        const containerRect = container.getBoundingClientRect();
+    function createHeart(x, y) {
         const h = document.createElement('div');
         h.innerHTML = "❤️"; h.className = "heart";
-        // Pozícia relatívne ku kontajneru
-        h.style.left = (x - containerRect.left - 10) + "px"; 
-        h.style.top = (y - containerRect.top - 10) + "px";
-        container.appendChild(h);
+        h.style.left = (x - area.offsetLeft) + "px"; h.style.top = (y - area.offsetTop) + "px";
+        area.appendChild(h);
         setTimeout(() => h.remove(), 1000);
     }
 
-    // --- KOSŤ ---
-    const bone = document.getElementById('bone'); let dragging = false;
-    bone.onpointerdown = (e) => { dragging = true; bone.setPointerCapture(e.pointerId); };
+    // --- DRAG BONE ---
+    const bone = document.getElementById('bone');
+    let drag = false;
+    bone.onpointerdown = (e) => { drag = true; bone.setPointerCapture(e.pointerId); };
     bone.onpointermove = (e) => {
-        if(!dragging) return;
-        // Kde je kosť teraz (relatívne ku kontajneru)
-        const containerRect = container.getBoundingClientRect();
-        const relativeX = e.clientX - containerRect.left;
-        const relativeY = e.clientY - containerRect.top;
-        
-        bone.style.left = (relativeX - 25) + "px"; 
-        bone.style.top = (relativeY - 25) + "px";
-        
-        // Kolízia s obrázkom psa
-        const dogRect = dogImgElem.getBoundingClientRect();
-        if(e.clientX > dogRect.left && e.clientX < dogRect.right && e.clientY > dogRect.top && e.clientY < dogRect.bottom) {
-            dragging = false; bone.style.display = "none";
-            happy += 35; updateBar();
-            talk("Mňam! Moje systémy sú opäť online! Ďakujem, Zoe.");
-            confetti({particleCount: 40, origin:{x:0.5, y:0.4}, colors: ['#00bcd4', '#f1c40f']});
-            // Vrátenie kosti na pôvodné miesto
-            setTimeout(() => { 
-                if(stage === 1) {
-                    bone.style.display="block"; bone.style.bottom="0px"; bone.style.right="0px"; bone.style.left="auto"; bone.style.top="auto";
-                }
-            }, 2500);
+        if(!drag) return;
+        bone.style.left = (e.clientX - area.offsetLeft - 25) + "px";
+        bone.style.top = (e.clientY - area.offsetTop - 25) + "px";
+        const r = document.getElementById('dog-img').getBoundingClientRect();
+        if(e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom) {
+            drag = false; bone.style.display = "none";
+            happy += 15; updateBar(); // KOSŤ DÁVA VIAC ALE STÁLE POMALŠIE
+            talk("Mňam! To bolo dobré!");
+            setTimeout(() => { if(stage === 1) { bone.style.display="block"; bone.style.bottom="10px"; bone.style.right="10px"; bone.style.left="auto"; bone.style.top="auto";} }, 3000);
         }
     };
-    bone.onpointerup = () => dragging = false;
+    bone.onpointerup = () => drag = false;
 
     function updateBar() {
-        if(stage !== 1) return;
         document.getElementById('bar').style.width = Math.min(happy, 100) + "%";
-        if(happy >= 100) {
+        if(happy >= 100 && stage === 1) {
             stage = 2;
-            document.getElementById('p2').style.display = 'none';
+            document.getElementById('f2').style.display = 'none';
             document.getElementById('bone').style.display = 'none';
-            talk("Vau! Som plný energie! Zoe, teraz ti môžem ukázať to prekvapenie. Ježiško ti posiela prístup do knižnice plnej príbehov. Pozri, tieto mi odporučil špeciálne pre teba.");
-            setTimeout(() => {
-                document.getElementById('p3').style.display = 'block';
-            }, 3000);
+            talk("Jej! Mám kopec energie! Zoe, Ježiško mi dal za úlohu ukázať ti tvoj darček. Sú to audioknihy! Vyber si jednu a ja ti o nej poviem viac.");
+            document.getElementById('book-list').style.display = 'block';
         }
     }
 
-    function bt(id) {
-        confetti({particleCount: 30, colors: ['#00bcd4']});
-        if(id === 1) talk("Správna pětka na ostrove pokladov. To znie ako super dobrodružstvo pre teba!");
-        if(id === 2) talk("O chlapcovi, ktorý rozumel psom. Stavím sa, že aj ty mi rozumieš, však?");
-        if(id === 3) talk("Robopes! Ha! To je kniha o mne! Alebo aspoň o mojom bratrancovi. Tú si musíš vypočuť.");
+    function bookTalk(id) {
+        confetti({particleCount: 30, spread: 50, origin: {y: 0.8}});
+        if(id === 1) talk("Správna pětka! Priprav sa na hľadanie pokladu na ostrove. To bude dobrodružstvo!");
+        if(id === 2) talk("Toto je príbeh o chlapcovi, ktorý rozumie psom. Skoro ako ty mne!");
+        if(id === 3) talk("Robopes! To je môj plechový bratranec. S ním zažiješ poriadnu srandu.");
         document.getElementById('gift-btn').style.display = 'block';
     }
 
-    function showF() {
-        document.getElementById('p3').style.display = 'none';
-        document.getElementById('voucher-section').style.display = 'block';
-        talk("Šťastné a veselé Vianoce, Zoe! Tu je tvoj kód. Rýchlo si ho odpíš alebo popros niekoho dospelého, nech ti ho pomôže zadať.");
-        confetti({particleCount: 200, spread: 90, origin: {y: 0.6}, colors: ['#f1c40f', '#e74c3c', '#00bcd4']});
+    function showFinal() {
+        document.getElementById('book-list').style.display = 'none';
+        document.getElementById('voucher-box').style.display = 'block';
+        talk("Šťastné a veselé Vianoce Zoe! Tu je tvoj kód do sveta príbehov.");
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
     }
 
     window.onload = () => {
-        // Načítanie obrázkov kníh (pre istotu, aby boli v cache)
-        new Image().src = "https://www.audiolibrix.com/product/cz/2023/06/01/117163/cz-spravna-petka-na-ostrove-pokladu-enid-blyton-250.jpg";
-        new Image().src = "https://www.audiolibrix.com/product/sk/2017/11/02/23586/sk-o-chlapcovi-ktory-rozumel-psom-gabriela-futova-250.jpg";
-        new Image().src = "https://www.audiolibrix.com/product/sk/2022/05/05/97841/sk-robopes-david-walliams-250.jpg";
-
-        setTimeout(() => talk("Ahoj Zoe! Pripájam sa... Ježiško mi o tebe hovoril. Mám pre teba správu. Ale najskôr... ako sa budem volať?"), 1500);
+        setTimeout(() => talk("Ahoj Zoe! Ježiško mi o tebe rozprával. Poslal ma za tebou s dôležitou správou. Ale najskôr mi musíš vybrať meno."), 1000);
     };
 </script>
-
 </body>
 </html>
