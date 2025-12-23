@@ -6,7 +6,7 @@
     <title>Ježiškov Robo-posol pre Zoe</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --dog: #d1d8e0; --dog-d: #a5b1c2; --acc: #45aaf2; --gold: #f7b731; }
+        :root { --dog: #d1d8e0; --dog-d: #a5b1c2; --dog-shadow: #8e9da5; --acc: #45aaf2; --gold: #f1c40f; }
         body {
             font-family: 'Segoe UI', sans-serif; background: #1e272e; color: white; margin: 0; padding: 10px;
             display: flex; flex-direction: column; align-items: center; min-height: 100vh; touch-action: none; overflow: hidden;
@@ -16,22 +16,21 @@
             color: #333; box-shadow: 0 0 40px rgba(255,255,255,0.2); text-align: center; margin-top: 10px; z-index: 10;
         }
 
-        /* --- GRAFIKA PSA (OPRAVENÁ) --- */
+        /* --- GRAFIKA PSA (OPRAVENÉ NOHY) --- */
         .game-area { height: 260px; position: relative; width: 100%; overflow: hidden; touch-action: none; }
-        .dog-wrapper { height: 180px; position: absolute; width: 160px; left: 50%; top: 40%; transform: translate(-50%, -40%); transition: 0.2s; }
+        .dog-wrapper { height: 200px; position: absolute; width: 160px; left: 50%; top: 40%; transform: translate(-50%, -40%); transition: 0.2s; }
         
         .dog-body { 
             width: 110px; height: 80px; background: var(--dog); border-radius: 40px; 
-            position: absolute; bottom: 40px; left: 25px; border: 3px solid var(--dog-d); 
-            animation: breathe 3s infinite; z-index: 2; 
+            position: absolute; bottom: 50px; left: 25px; border: 3px solid var(--dog-d); 
+            animation: breathe 3s infinite; z-index: 3; 
         }
 
         .dog-head { 
             width: 85px; height: 75px; background: var(--dog); border-radius: 25px; 
-            position: absolute; top: 0px; right: 5px; border: 3px solid var(--dog-d); z-index: 5; 
+            position: absolute; top: 10px; right: 5px; border: 3px solid var(--dog-d); z-index: 5; 
         }
 
-        /* Uši posunuté viac do strán */
         .ear { width: 22px; height: 40px; background: var(--dog-d); position: absolute; border-radius: 8px; top: -5px; z-index: -1; }
         .ear.l { left: -10px; transform: rotate(-20deg); } 
         .ear.r { right: -10px; transform: rotate(20deg); }
@@ -39,27 +38,36 @@
         .eye { width: 14px; height: 14px; background: #222; border-radius: 50%; position: absolute; top: 20px; border: 2px solid var(--acc); box-shadow: 0 0 8px var(--acc); }
         .eye.l { left: 18px; } .eye.r { right: 18px; }
 
-        /* Ňufák a ústa */
         .snout { width: 34px; height: 22px; background: #eef2f3; border-radius: 12px; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); border: 1px solid #ccc; }
         .nose-tip { width: 12px; height: 8px; background: #333; border-radius: 4px; position: absolute; top: 3px; left: 50%; transform: translateX(-50%); }
         .mouth { width: 18px; height: 8px; border-bottom: 2px solid #555; border-radius: 50%; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); }
 
-        /* Nohy pripevnené k telu */
-        .leg { width: 16px; height: 35px; background: var(--dog); border: 2px solid var(--dog-d); border-radius: 8px; position: absolute; bottom: -20px; }
-        .leg::after { content: ''; width: 20px; height: 8px; background: var(--dog-d); position: absolute; bottom: -2px; left: -2px; border-radius: 4px; } /* Labka */
-        
+        /* NOHY - NOVÝ DIZAJN */
+        /* Predné nohy (súčasť tela) */
+        .leg { 
+            width: 20px; height: 35px; background: var(--dog); border: 3px solid var(--dog-d); 
+            border-radius: 8px; position: absolute; bottom: -20px; z-index: 4;
+        }
+        .leg::after { content: ''; width: 24px; height: 10px; background: var(--dog-d); position: absolute; bottom: -3px; left: -2px; border-radius: 5px; } /* Labka */
         .leg.l { left: 15px; } .leg.r { right: 15px; }
-        /* Zadné nohy (umiestnené na wrapperi, aby boli za telom) */
-        .back-leg { width: 16px; height: 35px; background: var(--dog-d); border-radius: 8px; position: absolute; bottom: 35px; z-index: 1; }
-        .back-leg.l { left: 45px; } .back-leg.r { right: 75px; }
 
-        .tail { width: 40px; height: 10px; background: var(--dog-d); position: absolute; left: 5px; bottom: 85px; border-radius: 10px; transform-origin: right; animation: wag 0.8s infinite alternate; z-index: 1; }
+        /* Zadné nohy (tmavšie, vzadu) */
+        .back-leg { 
+            width: 20px; height: 40px; background: var(--dog-shadow); border: 3px solid var(--dog-d); 
+            border-radius: 8px; position: absolute; bottom: 30px; z-index: 1; 
+        }
+        .back-leg::after { content: ''; width: 24px; height: 10px; background: var(--dog-d); position: absolute; bottom: -3px; left: -2px; border-radius: 5px; } /* Labka */
+        .back-leg.l { left: 25px; transform: rotate(-5deg); } 
+        .back-leg.r { right: 25px; transform: rotate(5deg); }
+
+
+        .tail { width: 40px; height: 10px; background: var(--dog-d); position: absolute; left: 5px; bottom: 95px; border-radius: 10px; transform-origin: right; animation: wag 0.8s infinite alternate; z-index: 1; }
         .tail.fast { animation: wag 0.2s infinite alternate !important; }
 
         #bone { font-size: 45px; position: absolute; bottom: 10px; right: 10px; cursor: grab; z-index: 100; touch-action: none; user-select: none; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2)); }
         
         @keyframes wag { from { transform: rotate(10deg); } to { transform: rotate(50deg); } }
-        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+        @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
         .heart { position: absolute; font-size: 25px; pointer-events: none; animation: floatUp 1s forwards; z-index: 99; }
         @keyframes floatUp { 0% { transform: translateY(0) opacity(1); } 100% { transform: translateY(-100px) opacity(0); } }
 
@@ -154,7 +162,8 @@
         function pet(x, y) {
             if(stage !== 1) return;
             const r = document.getElementById('dog-body').getBoundingClientRect();
-            if(x > r.left && x < r.right && y > r.top && y < r.bottom + 30) { 
+            // Rozšírená oblasť pre dotyk vrátane nôh
+            if(x > r.left - 10 && x < r.right + 10 && y > r.top && y < r.bottom + 40) { 
                 happy += 0.5; updateBar();
                 heart(x, y);
                 document.getElementById('tail').classList.add('fast');
@@ -176,7 +185,7 @@
             if(!drag) return;
             b.style.left = (e.clientX - 25) + "px"; b.style.top = (e.clientY - 25) + "px";
             const r = document.getElementById('dog-body').getBoundingClientRect();
-            if(e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom + 30) {
+            if(e.clientX > r.left && e.clientX < r.right && e.clientY > r.top && e.clientY < r.bottom + 40) {
                 drag = false; b.style.display = "none";
                 happy += 30; updateBar();
                 talk("Mňam! Táto je priamo z nebeskej kuchyne!");
